@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FishPrice Pro - 魚価分析アプリ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #1e88e5;
+      --primary-light: #6ab7ff;
+      --primary-dark: #005cb2;
+      --secondary-color: #64b5f6;
+      --text-color: #333333;
+      --background-color: #f5f5f5;
+      --card-background: #ffffff;
+      --accent-color: #ff4081;
+      --success-color: #4caf50;
+      --input-border: #bbdefb;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      object-fit: contain;
+    }
+
+    .logo span {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .nav-menu {
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--primary-light);
+      padding: 10px 0;
+      position: sticky;
+      top: 70px;
+      z-index: 999;
+    }
+
+    .nav-item {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      padding: 6px 10px;
+      border-radius: 20px;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .container {
+      max-width: 100%;
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card {
+      background-color: var(--card-background);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: var(--primary-color);
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .card-title::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--secondary-color);
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: var(--text-color);
+      font-weight: 700;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid var(--input-border);
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.1);
+      outline: none;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 40px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 700;
+      width: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-input-wrapper .btn {
+      display: inline-block;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--success-color);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    footer {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    @media (min-width: 576px) {
+      .container {
+        max-width: 540px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 720px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .container {
+        max-width: 960px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1140px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .nav-menu {
+        flex-wrap: wrap;
+      }
+
+      .nav-item {
+        flex: 0 0 50%;
+        text-align: center;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img src="img/Logo2.webp" alt="ロゴ">
+      <span>FishPrice Pro</span>
+    </div>
+  </header>
+
+  <nav class="nav-menu">
+    <a href="#" class="nav-item active"><i class="fas fa-home"></i> ホーム</a>
+    <a href="#" class="nav-item"><i class="fas fa-chart-line"></i> 分析</a>
+    <a href="#" class="nav-item"><i class="fas fa-database"></i> データ</a>
+    <a href="#" class="nav-item"><i class="fas fa-cog"></i> 設定</a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">新規データ登録</h2>
+      <form id="fishPriceForm" action="insert.php" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="date">日付</label>
+          <input id="date" class="form-control" type="date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label for="fish">魚種</label>
+          <select id="fish" class="form-control" name="fish" required>
+            <option value="" disabled selected>選択してください</option>
+            <option>ハマチ</option>
+            <option>マグロ</option>
+            <option>サバ</option>  
+            <option>アジ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="place">産地</label>
+          <select id="place" class="form-control" name="place" required>
+            <option value="" disabled selected>選択してください</option>
+            <option>北海道</option>
+            <option>江戸前</option>
+            <option>九州</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="price">価格 (円/kg)</label>
+          <input id="price" class="form-control" type="number" name="price" required>
+        </div>
+        <div class="form-group">
+          <label for="remarks">備考</label>
+          <textarea id="remarks" class="form-control" name="remarks"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="imgFile">画像</label>
+          <div class="file-input-wrapper">
+            <button class="btn" type="button">画像を選択</button>
+            <input id="imgFile" type="file" name="imgFile" accept="image/*">
+          </div>
+        </div>
+        <button type="submit" class="btn">データ保存</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">データが正常に保存されました！</div>
+
+  <footer>
+    &copy; 2024 FishPrice Pro. All rights reserved.
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <script>
+    document.getElementById('fishPriceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // ここでフォームデータの送信処理を行う
+      // 成功後、以下のトースト表示とフォームリセットを行う
+      document.getElementById('toast').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('toast').classList.remove('show');
+      }, 3000);
+      this.reset();
+    });
+
+    document.querySelector('.file-input-wrapper input[type=file]').addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        var fileName = this.files[0].name;
+        this.parentElement.querySelector('.btn').textContent = fileName;
+      }
+    });
+  </script>
+  <script src="js/fish_price_checker01.js"></script>
+</body>
+</html>
